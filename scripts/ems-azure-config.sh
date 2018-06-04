@@ -1,18 +1,18 @@
 #/tmp/ems/scripts/ems-azure-config.sh:
 #!/bin/bash -e
 
-#Make sure we have enough parameters (10). If not, warn and exit.
+#Make sure we have enough parameters (11). If not, warn and exit.
 
 ARGS=$@
 
 usage () {
    echo ""
-   echo "Usage $0 <EMS Port #> <EMS Server IP 1> <EMS Server IP 2> <EMS Data Azure Storage Account1 Name> <Azure Storage Account 1 Key> <EMS Data Azure Storage Account 2 Name> <Storage Account 2 Key> <Existing Storage Account for EMS Installer> <Existing Storage Account Key> <Existing Share where EMS installer is located>"
+   echo "Usage $0 <EMS Port #> <EMS Server IP 1> <EMS Server IP 2> <EMS Data Azure Storage Account1 Name> <Azure Storage Account 1 Key> <EMS Data Azure Storage Account 2 Name> <Storage Account 2 Key> <Existing Storage Account for EMS Installer> <Existing Storage Account Key> <Existing Share where EMS installer is located> <TIBCO user>"
    echo ""
 }
-share=${10}
+share=${11}
 
-if [ "$#" -lt 10 ]
+if [ "$#" -lt 11 ]
 then
   usage
   exit 1
@@ -21,6 +21,8 @@ else
 # Figure out if we are a TIBCO access, client or server VM. If it is a server, is it one or two.
 
   echo " Starting TIBCO-EMS Configuration Script"
+
+  user=$11
 
   hosttype=`hostname |grep Access`
   if [ "$hosttype" != "" ] ;then
@@ -325,8 +327,8 @@ EOF
 
   echo " Unmounting share and configring EMS"
 
-# Change owner to tibco 
-  chown -R tibco:tibco /opt/tibco
+# Change owner to the tibco user 
+  chown -R $user:$user /opt/tibco
   chmod -R 750 /opt/tibco
 
 # Umount the TIBCO installer share
@@ -394,8 +396,8 @@ EOF
     mkdir --parents /mnt/$tibemsdata1/tibco/cfgmgmt/ems/data/datastore
     mkdir --parents /mnt/$tibemsdata2/tibco/cfgmgmt/ems/data/datastore
 
-    chown -R tibco:tibco /mnt/$tibemsdata1
-    chown -R tibco:tibco /mnt/$tibemsdata2
+    chown -R $user:$user /mnt/$tibemsdata1
+    chown -R $user:$user /mnt/$tibemsdata2
 
 # Copy installed EMS config files to the first CIFS mount to share with other EMS server
     cp /home/user/tibco/tibco/cfgmgmt/ems/data/*.conf /mnt/$tibemsdata1/tibco/cfgmgmt/ems/data
@@ -491,7 +493,7 @@ EOF
 # Prep tibemsd.log file. $TIBCO_HOME is owned by root:root, but EMS service will run as tibco
 # and therefore not have permissions to write to the log file without the following
     touch $TIBEMSD_LOGFILE
-    chown tibco:tibco $TIBEMSD_LOGFILE
+    chown $user:$user $TIBEMSD_LOGFILE
 
 # Configure TIBCO EMS main configuration file
     echo " Configuring the TIBCO EMS main configuration file"
@@ -545,7 +547,7 @@ EOF
 #* Usage:       /etc/init.d/tibemsd {start|stop|status|restart}
 #*              service tibemsd {start|stop|status|restart}
 #* Author:      Richard Flather, TIBCO Messaging Group
-#* Date:        April, 2018
+#* Date:        June, 2018
 #*
 #* (C) Copyright TIBCO Software Inc. 2015-18. All rights reserved
 #******************************************************************
@@ -563,7 +565,7 @@ DAEMON=tibemsd
 DAEMON_PATH="$TIBCO_HOME/ems/$TIBCOEMS_VERSION/bin"
 DAEMON_CONF="\$DAEMON_PATH/tibemsd.json"
 DAEMON_OPTS="-config \$DAEMON_CONF -forceStart"
-DAEMON_USER=tibco
+DAEMON_USER="$user"
 
 # Start the service if not already running
 start()
