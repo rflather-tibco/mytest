@@ -90,12 +90,12 @@ else
 # Script Name: tib-afs-utils.sh
 # Author: Hans Krijger (github:hglkrijger)
 # Version: 0.3
-# Last Modified By: Richard Flather, April, 2018 
+# Last Modified By: Richard Flather, June, 2018 
 # Description:
 #  This script provides basic functionality for creating and mounting an Azure
 #  File Service share for use with TIBCO EMS.
 # Note:
-# This script has been tested on Red Hat 7.4 and still must be root
+# This script has been tested on/and requires Red Hat 7.5 and still must be root
 
 help()
 {
@@ -205,7 +205,7 @@ mount_share() {
     mount_location="\$2"
     persist="\$3"
     creds_file="/etc/cifs.\${share_name}"
-    mount_options="vers=3.0,nostrictsync,cache=strict,serverino,dir_mode=0777,file_mode=0777,credentials=\${creds_file}"
+    mount_options="vers=3.0,seal,nostrictsync,cache=strict,serverino,dir_mode=0777,file_mode=0777,credentials=\${creds_file}"
     mount_share="//\${STORAGE_ACCOUNT}.file.core.windows.net/\${SHARE_NAME}"
     
     log "creating credentials at \${creds_file}"
