@@ -10,7 +10,7 @@ usage () {
    echo "Usage $0 <EMS Port #> <EMS Server IP 1> <EMS Server IP 2> <EMS Data Azure Storage Account1 Name> <Azure Storage Account 1 Key> <EMS Data Azure Storage Account 2 Name> <Storage Account 2 Key> <Existing Storage Account for EMS Installer> <Existing Storage Account Key> <Existing Share where EMS installer is located> <TIBCO user>"
    echo ""
 }
-share=${11}
+share=${10}
 
 if [ "$#" -lt 11 ]
 then
