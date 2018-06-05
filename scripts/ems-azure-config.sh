@@ -1,30 +1,30 @@
 #/tmp/ems/scripts/ems-azure-config.sh:
 #!/bin/bash -e
 
-#Make sure we have enough parameters (11). If not, warn and exit.
+#Make sure we have enough parameters (12). If not, warn and exit.
 
 ARGS=$@
 
 usage () {
    echo ""
-   echo "Usage $0 <EMS Port #> <EMS Server IP 1> <EMS Server IP 2> <EMS Data Azure Storage Account1 Name> <Azure Storage Account 1 Key> <EMS Data Azure Storage Account 2 Name> <Storage Account 2 Key> <Existing Storage Account for EMS Installer> <Existing Storage Account Key> <Existing Share where EMS installer is located> <TIBCO user>"
+   echo "Usage $0 <EMS Port #> <EMS Server IP 1> <EMS Server IP 2> <EMS Data Azure Storage Account1 Name> <Azure Storage Account 1 Key> <EMS Data Azure Storage Account 2 Name> <Storage Account 2 Key> <Existing Storage Account for EMS Installer> <Existing Storage Account Key> <Existing Share where EMS installer is located> <TIBCO user> <access vm name>"
    echo ""
 }
-share=${10}
 
-if [ "$#" -lt 11 ]
+if [ "$#" -lt 12 ]
 then
   usage
   exit 1
 else
 
+share=${10}
+user=${11}
+
 # Figure out if we are a TIBCO access, client or server VM. If it is a server, is it one or two.
 
   echo " Starting TIBCO-EMS Configuration Script"
 
-  user=$11
-
-  hosttype=`hostname |grep Access`
+  hosttype=`hostname |grep ${12}`
   if [ "$hosttype" != "" ] ;then
     exit 0
   else
